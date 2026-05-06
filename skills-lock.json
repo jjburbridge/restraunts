@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "create-agent-with-sanity-context": {
+      "source": "sanity-io/agent-context",
+      "sourceType": "github",
+      "skillPath": "skills/create-agent-with-sanity-context/SKILL.md",
+      "computedHash": "50cfa2606751da1add9ae9d3dfb88de66cc261eb34790ec334b1a5158f69fcb2"
+    }
+  }
+}

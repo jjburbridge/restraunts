@@ -1,0 +1,14 @@
+{
+  "extraKnownMarketplaces": {
+    "sanity-agent-context": {
+      "source": {
+        "source": "github",
+        "repo": "sanity-io/agent-context",
+        "ref": "create-agent-with-sanity-context"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "create-agent-with-sanity-context@sanity-agent-context": true
+  }
+}
