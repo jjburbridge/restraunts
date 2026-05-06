@@ -11,6 +11,7 @@ out/
 
 # sanity
 dist/
+.sanity/
 
 # env
 .env
