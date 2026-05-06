@@ -20,6 +20,9 @@ dist/
 # turbo
 .turbo
 
+# package manager locks (yarn is canonical)
+package-lock.json
+
 # misc
 .DS_Store
 *.pem
