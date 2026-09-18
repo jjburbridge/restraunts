@@ -1,4 +1,4 @@
-import {EarthGlobeIcon} from '@sanity/icons'
+import {EarthGlobeIcon} from '@sanity/icons/EarthGlobe'
 import {defineField, defineType} from 'sanity'
 
 /**
@@ -11,15 +11,9 @@ export const location = defineType({
   type: 'document',
   fields: [
     defineField({
-      name: 'latitude',
-      title: 'Latitude',
-      type: 'number',
-      validation: (rule) => rule.required(),
-    }),
-    defineField({
-      name: 'longitude',
-      title: 'Longitude',
-      type: 'number',
+      name: 'coordinates',
+      title: 'Coordinates',
+      type: 'geopoint',
       validation: (rule) => rule.required(),
     }),
     defineField({

@@ -61,7 +61,7 @@ export default function RestaurantApp({ restaurants, cuisines, tags, features }:
       restaurants.filter((r) => {
         if (
           selectedCuisines.size > 0 &&
-          !(r.cuisines ?? []).some((c) => selectedCuisines.has(c._id))
+          !(r.cuisines?._id ? selectedCuisines.has(r.cuisines._id) : false)
         )
           return false
         if (

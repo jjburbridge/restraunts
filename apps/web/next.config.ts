@@ -1,7 +1,9 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next'
+import { sanity } from 'next-sanity/live/cache-life'
 
 const nextConfig: NextConfig = {
-  /* config options here */
-};
+  cacheComponents: true,
+  cacheLife: { default: sanity },
+}
 
-export default nextConfig;
+export default nextConfig

@@ -36,7 +36,7 @@ export interface Restaurant {
   default_language: string
   gluten_free?: boolean
   locations: RestaurantLocation[]
-  cuisines: Cuisine[]
+  cuisines?: Cuisine | null
   top_tags: Tag[]
   features: Feature[]
 }

@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import type { Restaurant } from '@/types'
 import { formatDistance } from '@/lib/distance'
 
@@ -7,10 +8,13 @@ interface Props {
 }
 
 export default function RestaurantCard({ restaurant, distance }: Props) {
-  const { restaurant_name, avg_rating, cuisines, top_tags, features, gluten_free } = restaurant
+  const { _id, restaurant_name, avg_rating, cuisines, top_tags, features, gluten_free } = restaurant
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-shadow flex flex-col gap-2">
+    <Link
+      href={`/restaurants/${encodeURIComponent(_id)}`}
+      className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-shadow flex flex-col gap-2"
+    >
       <div className="flex items-start justify-between gap-2">
         <h2 className="font-semibold text-gray-900 leading-snug">
           {restaurant_name ?? 'Unnamed Restaurant'}
@@ -28,14 +32,14 @@ export default function RestaurantCard({ restaurant, distance }: Props) {
       )}
 
       <div className="flex flex-wrap gap-1">
-        {cuisines?.map((c) => (
+        {cuisines?.name && (
           <span
-            key={c._id}
+            key={cuisines._id}
             className="text-xs bg-orange-50 text-orange-700 border border-orange-100 rounded-full px-2 py-0.5"
           >
-            {c.name}
+            {cuisines.name}
           </span>
-        ))}
+        )}
         {gluten_free && (
           <span className="text-xs bg-green-50 text-green-700 border border-green-100 rounded-full px-2 py-0.5">
             GF
@@ -62,6 +66,6 @@ export default function RestaurantCard({ restaurant, distance }: Props) {
           ))}
         </div>
       )}
-    </div>
+    </Link>
   )
 }
