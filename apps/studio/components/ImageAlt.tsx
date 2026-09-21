@@ -1,4 +1,4 @@
-import {Suspense, useState, type MouseEvent} from "react";
+import {Suspense, useCallback, useEffect, useRef, useState, type MouseEvent} from "react";
 import {
   SanityApp,
   createDocumentHandle,
@@ -10,6 +10,9 @@ import {LaunchIcon} from "@sanity/icons/Launch";
 import {WarningOutlineIcon} from "@sanity/icons/WarningOutline";
 import {Badge, Button, Card, Flex, Stack, Text} from "@sanity/ui";
 import {
+  PatchEvent,
+  set,
+  useFormCallbacks,
   useFormValue,
   useSource,
   useWorkspace,
@@ -116,9 +119,11 @@ function OpenMediaPluginLink({assetId}: {assetId: string}) {
 function ImageAssetAlt({
   assetId,
   documentAlt,
+  onAssetAltTextChange,
 }: {
   assetId: string;
   documentAlt: string;
+  onAssetAltTextChange: (assetId: string, assetAlt: string) => void;
 }) {
   const documentHandle = createDocumentHandle({
     documentId: assetId,
@@ -130,6 +135,11 @@ function ImageAssetAlt({
   });
 
   const imageAlt = formatStoredAlt(data?.altText);
+
+  useEffect(() => {
+    onAssetAltTextChange(assetId, imageAlt ?? "");
+  }, [assetId, imageAlt, onAssetAltTextChange]);
+
   const usesDocumentAlt = documentAlt.length > 0;
   const usesImageAlt = !usesDocumentAlt && Boolean(imageAlt);
   const tone = usesDocumentAlt
@@ -211,6 +221,27 @@ export function ImageAlt(props: StringInputProps) {
   const image = useFormValue(imagePath) as ImageFieldValue | undefined;
   const assetId = image?.asset?._ref;
   const documentAlt = typeof props.value === "string" ? props.value.trim() : "";
+  const {onChange} = useFormCallbacks();
+  const previousAssetAltRef = useRef<{assetId: string; alt: string} | null>(
+    null,
+  );
+
+  const handleAssetAltTextChange = useCallback(
+    (nextAssetId: string, assetAlt: string) => {
+      const previous = previousAssetAltRef.current;
+      if (!previous || previous.assetId !== nextAssetId) {
+        previousAssetAltRef.current = {assetId: nextAssetId, alt: assetAlt};
+        return;
+      }
+      if (previous.alt === assetAlt) {
+        return;
+      }
+      previousAssetAltRef.current = {assetId: nextAssetId, alt: assetAlt};
+      // Form callbacks here are scoped to the image object, not the document.
+      onChange(PatchEvent.from(set(Date.now(), ["altCheckNonce"])));
+    },
+    [onChange],
+  );
 
   return (
     <Stack gap={4}>
@@ -218,7 +249,11 @@ export function ImageAlt(props: StringInputProps) {
       {assetId ? (
         <SanityApp fallback={LOADING_FALLBACK}>
           <Suspense key={assetId} fallback={LOADING_FALLBACK}>
-            <ImageAssetAlt assetId={assetId} documentAlt={documentAlt} />
+            <ImageAssetAlt
+              assetId={assetId}
+              documentAlt={documentAlt}
+              onAssetAltTextChange={handleAssetAltTextChange}
+            />
           </Suspense>
         </SanityApp>
       ) : (

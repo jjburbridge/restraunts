@@ -2,6 +2,22 @@ import { DocumentTextIcon } from "@sanity/icons/DocumentText";
 import { defineArrayMember, defineField, defineType } from "sanity";
 import { ImageAlt } from "../components/ImageAlt";
 
+function hasImageAltText(
+  value: string | Record<string, string> | null | undefined,
+) {
+  if (typeof value === "string") {
+    return value.trim().length > 0;
+  }
+
+  if (value && typeof value === "object") {
+    return Object.values(value).some(
+      (part) => typeof part === "string" && part.trim().length > 0,
+    );
+  }
+
+  return false;
+}
+
 /**
  * Restaurant schema. Define and edit the fields for the 'restaurant' content type.
  */
@@ -31,6 +47,47 @@ export const restaurant = defineType({
           components: {
             input: ImageAlt,
           },
+          validation: (rule) =>
+            rule.custom(async (value, context) => {
+              const documentAlt =
+                typeof value === "string" ? value.trim() : "";
+              if (documentAlt) {
+                return true;
+              }
+
+              const parent = context.parent as
+                | {
+                    asset?: { _ref?: string };
+                    altCheckNonce?: number;
+                  }
+                | undefined;
+              const assetId = parent?.asset?._ref;
+              if (!assetId) {
+                return "An Alt Text is required";
+              }
+
+              const client = context
+                .getClient({ apiVersion: "2026-09-18" })
+                .withConfig({ useCdn: false });
+              const imageAsset = await client.fetch<{
+                altText?: string | Record<string, string> | null;
+              } | null>(
+                `*[_type == "sanity.imageAsset" && _id == $id][0]{altText}`,
+                {
+                  id: assetId,
+                  nonce: parent?.altCheckNonce ?? 0,
+                },
+              );
+
+              return hasImageAltText(imageAsset?.altText)
+                ? true
+                : "An Alt Text is required";
+            }),
+        }),
+        defineField({
+          name: "altCheckNonce",
+          type: "number",
+          hidden: true,
         }),
       ],
     }),
@@ -38,7 +95,9 @@ export const restaurant = defineType({
       name: "locations",
       title: "Locations",
       type: "array",
-      of: [defineArrayMember({ type: "reference", to: [{ type: "location" }] })],
+      of: [
+        defineArrayMember({ type: "reference", to: [{ type: "location" }] }),
+      ],
     }),
     defineField({
       name: "avg_rating",
