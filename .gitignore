@@ -12,6 +12,7 @@ out/
 # sanity
 dist/
 .sanity/
+exports/
 
 # env
 .env
