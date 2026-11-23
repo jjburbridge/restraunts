@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "add-studio-tour": {
+      "source": "sanity-labs/add-studio-tour",
+      "sourceType": "github",
+      "skillPath": "add-studio-tour/skills/add-studio-tour/SKILL.md",
+      "computedHash": "c1c26fc9889152a1de2c44d5b85243189317a82ba72d3e291a594a87f8c7f212"
+    }
+  }
+}
